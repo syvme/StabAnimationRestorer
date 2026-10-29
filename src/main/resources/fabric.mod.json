@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "stabanimationrestorer",
+  "version": "${version}",
+  "name": "StabAnimationRestorer",
+  "description": "Restore the stab animation from before 26.3 and stop it from continuing to play after switching from a spear to a different item.",
+  "authors": ["syvme"],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/stabanimationrestorer",
+    "sources": "https://github.com/syvme/stabanimationrestorer",
+    "issues": "https://github.com/syvme/stabanimationrestorer/issues"
+  },
+  "license": "AGPL-3.0",
+  "icon": "icon.png",
+  "environment": "client",
+  "mixins": [
+    {
+      "config": "stabanimationrestorer.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}"
+  }
+}
