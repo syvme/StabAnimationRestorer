@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Read Gradle properties
+        id: gradle
+        shell: bash
+        run: |
+          get_property() {
+            grep -E "^[[:space:]]*$1[[:space:]]*=" gradle.properties \
+              | head -n 1 \
+              | sed -E 's/^[^=]*=[[:space:]]*//; s/[[:space:]]*$//'
+          }
+
+          MOD_VERSION=$(get_property mod_version)
+          ARCHIVE_NAME=$(get_property archives_base_name)
+
+          if [[ -z "$MOD_VERSION" || -z "$ARCHIVE_NAME" ]]; then
+            echo "Could not read mod_version or archives_base_name from gradle.properties"
+            exit 1
+          fi
+
+          echo "mod_version=$MOD_VERSION" >> "$GITHUB_OUTPUT"
+          echo "jar_file=build/libs/$ARCHIVE_NAME-$MOD_VERSION.jar" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        run: chmod +x ./gradlew && ./gradlew clean build
+
+      - name: Verify build artifact
+        run: |
+          if [[ ! -f "${{ steps.gradle.outputs.jar_file }}" ]]; then
+            echo "Expected JAR not found: ${{ steps.gradle.outputs.jar_file }}"
+            ls -la build/libs
+            exit 1
+          fi
+
+      - name: Publish
+        uses: Kira-NT/mc-publish@v3
+        with:
+          files: ${{ steps.gradle.outputs.jar_file }}
+
+          version: ${{ steps.gradle.outputs.mod_version }}
+          version-type: release
+          name: Stab Animation Restorer ${{ steps.gradle.outputs.mod_version }}
+
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          modrinth-id: ${{ vars.MODRINTH_PROJECT_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}

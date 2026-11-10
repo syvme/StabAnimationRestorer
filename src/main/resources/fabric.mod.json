@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "id": "stabanimationrestorer",
   "version": "${version}",
-  "name": "StabAnimationRestorer",
+  "name": "Stab Animation Restorer",
   "description": "Restore the stab animation from before 26.3 and stop it from continuing to play after switching from a spear to a different item.",
   "authors": ["syvme"],
   "contact": {
-    "homepage": "https://modrinth.com/mod/stabanimationrestorer",
+    "homepage": "https://modrinth.com/mod/stab-animation-restorer",
     "sources": "https://github.com/syvme/stabanimationrestorer",
     "issues": "https://github.com/syvme/stabanimationrestorer/issues"
   },
